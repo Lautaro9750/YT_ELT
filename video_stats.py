@@ -1,5 +1,6 @@
 import requests
 import json
+from datetime import date
 
 import os
 from dotenv import load_dotenv
@@ -119,7 +120,7 @@ def extract_video_data(video_ids):
                 "title": snippet['title'],
                 "publishedAt": snippet['publishedAt'],
                 "duration": contentDetails['duration'],
-                "viewcount": statistics.get('viewcount', None),
+                "viewCount": statistics.get('viewCount', None),
                 "likeCount":statistics.get('likeCount', None),
                 "commentCount": statistics.get('commentCount', None),
             }
@@ -131,14 +132,21 @@ def extract_video_data(video_ids):
     except requests.exceptions.RequestException as e:
 
         raise e
+    
+def save_to_json(extracted_data):
 
+    file_path = f"E:/Udemy/YT_ELT/data/YT_data_{date.today()}.json"
+
+    with open(file_path, "w", encoding="utf-8") as json_outfile:
+        json.dump(extracted_data, json_outfile, indent=4, ensure_ascii=False)
 
 
 if __name__ == "__main__":
 
     playlistid = get_playlist_id()
     video_ids = get_video_ids(playlistid)
-    stats = (extract_video_data(video_ids))
-    print(json.dumps(stats, indent=4))
+    video_data = extract_video_data(video_ids)
+    save_to_json(video_data)
+    #print(json.dumps(stats, indent=4))
 
         
